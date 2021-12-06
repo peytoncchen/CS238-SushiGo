@@ -1,0 +1,28 @@
+https://tex.stackexchange.com/questions/289385/workflow-for-including-jupyter-aka-ipython-notebooks-as-pages-in-a-latex-docum
+
+
+Here is how I like to include Jupyter notebooks in a LaTeX document with \include{}.
+
+Outline
+
+In the Jupyter Notebook, use the raw option for non-code exposition which contains LaTeX. This is achieved by selecting the cell and then pressing ESC followed by R. The cell might look like this:
+This is some text in the notebook which contains LaTeX.  
+So we can write $\theta \in (0,1)$ or cite \ref{chapter1}  
+from elsewhere in the Latex file.
+Your LaTeX can reference whatever you like in the overall LaTeX document.
+
+Use nbconvert to output to markdown first. Suppose your notebook is named test.ipynb. Then use
+jupyter nbconvert --to markdown test.ipynb
+This code creates test.md which is the intermediate file.
+
+Use Pandoc to convert the markdown into LaTeX, as in
+pandoc --listings -f markdown -t latex test.md -o test.tex
+This will create test.tex which can then be inserted into your main LaTeX document with \include{test.tex}.
+Note: The listings package must be available to your LaTeX installation. Dropping the --listings option works, but produces 
+Tex which includes many additional command sequences you may not want in your main Tex file. Add the standalone option 
+in order to preview the pdf or the see which command sequences and packages you might want to include in 
+your main Latex document:
+
+pandoc --listings -f markdown -t latex test.md -s -o test.tex
+pdflatex test.tex
+You can then open the pdf test.pdf for a preview.
